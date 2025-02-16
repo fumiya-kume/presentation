@@ -1,27 +1,34 @@
-# Generalize Marp Workflow
+# Implement Marp workflow with best practices
 
-This PR updates the GitHub Actions workflow to automatically process all Markdown files in the repository, making it more flexible and maintainable.
+This PR implements a GitHub Actions workflow for automatically generating and deploying Marp presentations.
 
 ## Changes
 
-- Update workflow to automatically find and process all markdown files
-- Maintain directory structure for all presentations
-- Automatically handle image assets for each presentation
-- Update documentation with generalized instructions
+- Set up GitHub Actions workflow for Marp presentations
+- Configure dynamic file finding and processing
+- Implement proper Docker integration with MARP_USER
+- Add safe image handling per presentation
+- Configure GitHub Pages deployment
+- Set up .gitignore for build artifacts
 
-## Key Features
+## Technical Details
 
-- Processes all markdown files in any directory
-- Preserves directory structure in the output
-- Copies associated images (PNG, JPG, JPEG, GIF)
-- Generates HTML, PDF, and PPTX for each presentation
+- Uses GitHub Actions' native Docker support
+- Processes all Markdown files with `marp: true`
+- Maintains original file structure
+- Handles spaces in filenames correctly
+- Provides clear logging for debugging
+
+## Deployment
+
+- PR previews under pr-preview directory
+- Production deployments to gh-pages root
+- Clean exclusion for PR previews
 
 ## Testing
 
-The workflow will automatically:
-- Find all markdown files
-- Process each file with its images
-- Generate all output formats
-- Deploy to the preview environment
-
-You can verify the results in the PR preview deployment. 
+The workflow automatically:
+- Finds and processes all Marp markdown files
+- Generates HTML, PDF, and PPTX outputs
+- Deploys to GitHub Pages
+- Provides PR preview links 
