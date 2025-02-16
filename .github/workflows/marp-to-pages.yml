@@ -24,10 +24,11 @@ jobs:
       - name: Ensure build dir exists
         run: mkdir -p build
 
-      - name: Find markdown files
+      - name: Find Marp markdown files
         id: find-md
         run: |
-          echo "files=$(find . -type f -name "*.md" ! -path "./.github/*" ! -path "./build/*" -exec realpath --relative-to=. {} \; | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+          # Find markdown files containing "marp: true" and output as JSON array
+          echo "files=$(find . -type f -name "*.md" ! -path "./.github/*" ! -path "./build/*" -exec sh -c 'grep -l "marp: true" "$1"' sh {} \; | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
 
       - name: Process markdown files
         run: |
