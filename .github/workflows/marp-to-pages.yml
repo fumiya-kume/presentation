@@ -27,7 +27,7 @@ jobs:
         id: find-md
         run: |
           # Find all Marp markdown files and convert to JSON array
-          files=$(find . -type f -name "*.md" ! -path "./.github/*" ! -path "./build/*" -exec grep -l "marp: true" {} \; | \
+          files=$(find . -type f -name "*.md" ! -path "./.github/*" ! -path "./build/*" ! -name "README.md" -exec grep -l "marp: true" {} \; | \
                  sed -e 's|^\./||' | jq -R -s -c 'split("\n")[:-1]')
           echo "Found files: $files"
           echo "files=$files" >> $GITHUB_OUTPUT
