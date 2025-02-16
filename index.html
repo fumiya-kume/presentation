@@ -216,21 +216,6 @@
             showLoadingState();
 
             try {
-                // Check cache first
-                const cache = localStorage.getItem('presentations');
-                if (cache) {
-                    const { data, timestamp } = JSON.parse(cache);
-                    const cacheAge = Date.now() - timestamp;
-                    
-                    // Use cache if it's less than 5 minutes old
-                    if (cacheAge < 5 * 60 * 1000) {
-                        renderPresentations(data);
-                        // Fetch fresh data in background
-                        fetchPresentations().catch(console.error);
-                        return;
-                    }
-                }
-
                 await fetchPresentations();
             } catch (error) {
                 console.error('Error loading presentations:', error);
@@ -243,13 +228,6 @@
             if (!response.ok) throw new Error('Failed to load presentations');
             
             const data = await response.json();
-            
-            // Cache the response
-            localStorage.setItem('presentations', JSON.stringify({
-                data: data.presentations,
-                timestamp: Date.now()
-            }));
-
             renderPresentations(data.presentations);
         }
 
