@@ -1,0 +1,11 @@
+# Build output
+build/
+
+# Generated files
+*.html
+*.pdf
+*.pptx
+
+# OS-specific files
+.DS_Store
+Thumbs.db 

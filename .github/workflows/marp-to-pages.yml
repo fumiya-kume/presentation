@@ -21,34 +21,67 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Ensure build dir exists
+      - name: Find Marp markdown files
+        id: find-md
+        run: |
+          # Find all Marp markdown files and convert to JSON array
+          files=$(find . -type f -name "*.md" ! -path "./.github/*" ! -path "./build/*" -exec grep -l "marp: true" {} \; | \
+                 sed -e 's|^\./||' | jq -R -s -c 'split("\n")[:-1]')
+          echo "Found files: $files"
+          echo "files=$files" >> $GITHUB_OUTPUT
+
+      - name: Create build directory
         run: mkdir -p build
 
-      - name: Process DB history in Mobile presentation
-        uses: docker://marpteam/marp-cli:v3.0.2
-        with:
-          args: '"DB history in Mobile/presentation.md" -o "build/DB history in Mobile/presentation.html" --allow-local-files'
-        env:
-          MARP_USER: root:root
-
-      - name: Copy images for DB history
+      - name: Process markdown files
         run: |
-          mkdir -p "build/DB history in Mobile"
-          cp "DB history in Mobile/"*.png "build/DB history in Mobile/" || true
+          # Function to generate output in different formats using GitHub Actions' Docker support
+          generate_output() {
+            local input="$1" output="$2"
+            local output_dir=$(dirname "$output")
+            
+            echo "Generating $output from $input"
+            echo "Ensuring output directory $output_dir exists"
+            mkdir -p "$output_dir"
+            
+            docker run --rm \
+              -v "$(pwd):/work" \
+              -w /work \
+              -e MARP_USER="root:root" \
+              marpteam/marp-cli:v3.0.2 \
+              "/work/${input}" --allow-local-files -o "/work/${output}"
+          }
 
-      - name: Generate PDF for DB history
-        uses: docker://marpteam/marp-cli:v3.0.2
-        with:
-          args: '"DB history in Mobile/presentation.md" --allow-local-files -o "build/DB history in Mobile/presentation.pdf"'
-        env:
-          MARP_USER: root:root
+          # Function to copy images
+          copy_images() {
+            local src="$1" dst="$2"
+            echo "Copying images from $src to $dst"
+            mkdir -p "$dst"
+            if [ -d "$src" ]; then
+              find "$src" -maxdepth 1 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.gif" \) \
+                -exec cp {} "$dst/" \;
+            fi
+          }
 
-      - name: Generate PPTX for DB history
-        uses: docker://marpteam/marp-cli:v3.0.2
-        with:
-          args: '"DB history in Mobile/presentation.md" --allow-local-files -o "build/DB history in Mobile/presentation.pptx"'
-        env:
-          MARP_USER: root:root
+          # Process each markdown file
+          echo "Files to process: ${{ steps.find-md.outputs.files }}"
+          while IFS= read -r file; do
+            echo "Processing: ${file}"
+            
+            # Prepare directories
+            dir=$(dirname "$file")
+            filename=$(basename "$file" .md)
+            target_dir="build/${dir}"
+            mkdir -p "$target_dir"
+            
+            # Copy images
+            copy_images "$dir" "$target_dir"
+            
+            # Generate all formats
+            generate_output "$file" "${target_dir}/${filename}.html"
+            generate_output "$file" "${target_dir}/${filename}.pdf"
+            generate_output "$file" "${target_dir}/${filename}.pptx"
+          done < <(echo '${{ steps.find-md.outputs.files }}' | jq -r '.[]')
 
       - name: Deploy preview
         if: ${{ github.event_name == 'pull_request' }}
