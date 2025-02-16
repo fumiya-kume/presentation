@@ -30,13 +30,27 @@ class PresentationState {
     }
 
     async loadPresentations() {
-        const response = await fetch('../metadata.json');
-        if (!response.ok) throw new Error('Failed to load presentations');
-        
-        const data = await response.json();
-        this.presentations = data.presentations.sort(
-            (a, b) => new Date(b.lastModified) - new Date(a.lastModified)
-        );
+        try {
+            const response = await fetch('metadata.json');  // Updated path
+            if (!response.ok) {
+                throw new Error(`Failed to load metadata (Status: ${response.status})`);
+            }
+            
+            const data = await response.json();
+            if (!data.presentations || !Array.isArray(data.presentations)) {
+                throw new Error('Invalid metadata format: missing presentations array');
+            }
+
+            this.presentations = data.presentations.sort(
+                (a, b) => new Date(b.lastModified) - new Date(a.lastModified)
+            );
+        } catch (error) {
+            console.error('Error loading presentations:', error);
+            throw new Error(
+                `Failed to load presentation data: ${error.message}. ` +
+                'Please try refreshing the page or return to the index page.'
+            );
+        }
     }
 
     findPresentationIndex(path) {
