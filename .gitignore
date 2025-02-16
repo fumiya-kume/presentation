@@ -8,4 +8,9 @@ build/
 
 # OS-specific files
 .DS_Store
-Thumbs.db 
+Thumbs.db
+
+# Cursor temporary files
+.github/pr-description.md
+.git-commit-message.md
+.git-rebase-todo.md 

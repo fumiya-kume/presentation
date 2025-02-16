@@ -61,4 +61,54 @@ The workflow will:
 You can verify the results by:
 1. Checking the generated metadata.json
 2. Verifying the links work
-3. Confirming the automatic updates 
+3. Confirming the automatic updates
+
+# Improve PR Description Management
+
+This PR adds proper management for PR description files and temporary files in the repository.
+
+## Changes
+
+- Add `.cursorrule` file for PR description handling
+  - Configure PR template location
+  - Specify temporary file patterns
+  - Define file organization rules
+
+- Update `.gitignore` for temporary files
+  - Add PR description temporary files
+  - Add Cursor-specific patterns
+  - Maintain consistent ignore patterns
+
+## Implementation Details
+
+The `.cursorrule` configuration:
+```json
+{
+  "pr": {
+    "description": {
+      "template": ".github/pull_request_template.md",
+      "temporary": ".github/pr-description.md"
+    }
+  },
+  "ignore": [
+    ".github/pr-description.md",
+    ".git-commit-message.md",
+    ".git-rebase-todo.md"
+  ]
+}
+```
+
+Added patterns to `.gitignore`:
+```
+# Cursor temporary files
+.github/pr-description.md
+.git-commit-message.md
+.git-rebase-todo.md
+```
+
+## Testing
+
+- Verify that temporary files are properly ignored
+- Confirm PR template is preserved
+- Check that PR descriptions are handled correctly
+- Ensure Cursor integration works as expected 
