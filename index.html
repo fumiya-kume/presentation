@@ -64,6 +64,16 @@
     </div>
 
     <script>
+        // Utility function to escape HTML
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
         // Presentation loading and rendering logic
         async function loadPresentations() {
             const loadingStates = document.querySelector('loading-states');
@@ -93,74 +103,16 @@
 
         function renderPresentations(presentations) {
             const grid = document.getElementById('presentationGrid');
-            grid.innerHTML = presentations.map(presentation => createPresentationCard(presentation)).join('');
-        }
-
-        function createPresentationCard(presentation) {
-            return `
-                <article class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-200">
-                    <div class="p-6">
-                        <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                            <a href="detail.html?id=${encodeURIComponent(presentation.path)}" 
-                               class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                                ${escapeHtml(presentation.title)}
-                            </a>
-                        </h2>
-                        <p class="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">
-                            ${escapeHtml(presentation.description)}
-                        </p>
-                        <div class="flex justify-between items-center">
-                            <time class="text-sm text-gray-500 dark:text-gray-400" datetime="${presentation.lastModified}">
-                                ${formatDate(presentation.lastModified)}
-                            </time>
-                            <div class="space-x-2">
-                                <a href="detail.html?id=${encodeURIComponent(presentation.path)}" 
-                                   class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
-                                   title="View Details">
-                                    <i class="fas fa-info-circle"></i>
-                                </a>
-                                <a href="${presentation.formats.html}" 
-                                   class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
-                                   title="View Online">
-                                    <i class="fas fa-globe"></i>
-                                </a>
-                                <a href="${presentation.formats.pdf}" 
-                                   class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition-colors"
-                                   title="Download PDF">
-                                    <i class="fas fa-file-pdf"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-            `;
-        }
-
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            const now = new Date();
-            const diff = now - date;
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-
-            if (days < 1) return 'Today';
-            if (days === 1) return 'Yesterday';
-            if (days < 7) return `${days} days ago`;
-            if (days < 30) return `${Math.floor(days / 7)} weeks ago`;
-            
-            return date.toLocaleDateString(undefined, {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            });
-        }
-
-        function escapeHtml(unsafe) {
-            return unsafe
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
+            grid.innerHTML = presentations.map(presentation => `
+                <presentation-card
+                    title="${escapeHtml(presentation.title)}"
+                    description="${escapeHtml(presentation.description)}"
+                    path="${escapeHtml(presentation.path)}"
+                    last-modified="${presentation.lastModified}"
+                    html-url="${escapeHtml(presentation.formats.html)}"
+                    pdf-url="${escapeHtml(presentation.formats.pdf)}"
+                ></presentation-card>
+            `).join('');
         }
 
         // Load presentations when the page loads
