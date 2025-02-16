@@ -27,33 +27,43 @@ jobs:
       - name: Find Marp markdown files
         id: find-md
         run: |
-          # Find markdown files containing "marp: true" and output as JSON array
-          echo "files=$(find . -type f -name "*.md" ! -path "./.github/*" ! -path "./build/*" -exec sh -c 'grep -l "marp: true" "$1"' sh {} \; | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+          echo "Looking for Marp markdown files..."
+          echo "Found markdown files:"
+          find . -type f -name "*.md" ! -path "./.github/*" ! -path "./build/*"
+          echo "Checking for marp: true..."
+          find . -type f -name "*.md" ! -path "./.github/*" ! -path "./build/*" -exec sh -c 'echo "Checking $1"; grep -l "marp: true" "$1"' sh {} \;
+          echo "Creating JSON array..."
+          files=$(find . -type f -name "*.md" ! -path "./.github/*" ! -path "./build/*" -exec sh -c 'grep -l "marp: true" "$1"' sh {} \; | sed 's|^./||' | jq -R -s -c 'split("\n")[:-1]')
+          echo "Found files: $files"
+          echo "files=$files" >> $GITHUB_OUTPUT
 
       - name: Process markdown files
         run: |
+          echo "Files to process: ${{ steps.find-md.outputs.files }}"
           for file in $(echo '${{ steps.find-md.outputs.files }}' | jq -r '.[]'); do
-            dir=$(dirname "$file")
-            filename=$(basename "$file" .md)
-            target_dir="build/$dir"
+            echo "Processing $file..."
+            dir="$(dirname "${file}")"
+            filename="$(basename "${file}")"
+            filename="${filename%.md}"  # Remove .md extension after basename
+            target_dir="build/${dir}"
             
             # Create target directory
-            mkdir -p "$target_dir"
+            mkdir -p "${target_dir}"
             
             # Copy all images from the source directory
-            find "$dir" -maxdepth 1 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.gif" \) -exec cp {} "$target_dir/" \;
+            find "${dir}" -maxdepth 1 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.gif" \) -exec cp {} "${target_dir}/" \;
             
             # Generate HTML
-            docker run --rm -u root:root -v $PWD:/work -w /work marpteam/marp-cli:v3.0.2 \
-              "$file" -o "$target_dir/$filename.html" --allow-local-files
+            docker run --rm -u root:root -v "$(pwd):/work" -w /work marpteam/marp-cli:v3.0.2 \
+              "/work/${file}" -o "/work/${target_dir}/${filename}.html" --allow-local-files
             
             # Generate PDF
-            docker run --rm -u root:root -v $PWD:/work -w /work marpteam/marp-cli:v3.0.2 \
-              "$file" --allow-local-files -o "$target_dir/$filename.pdf"
+            docker run --rm -u root:root -v "$(pwd):/work" -w /work marpteam/marp-cli:v3.0.2 \
+              "/work/${file}" --allow-local-files -o "/work/${target_dir}/${filename}.pdf"
             
             # Generate PPTX
-            docker run --rm -u root:root -v $PWD:/work -w /work marpteam/marp-cli:v3.0.2 \
-              "$file" --allow-local-files -o "$target_dir/$filename.pptx"
+            docker run --rm -u root:root -v "$(pwd):/work" -w /work marpteam/marp-cli:v3.0.2 \
+              "/work/${file}" --allow-local-files -o "/work/${target_dir}/${filename}.pptx"
           done
 
       - name: Deploy preview
