@@ -2,9 +2,9 @@
 build/
 
 # Generated files
-*.html
-*.pdf
-*.pptx
+/build/**/*.html
+/build/**/*.pdf
+/build/**/*.pptx
 
 # OS-specific files
 .DS_Store

@@ -35,6 +35,15 @@ jobs:
       - name: Create build directory
         run: mkdir -p build
 
+      - name: Copy index page
+        run: |
+          cp index.html build/
+          
+          # Update paths for preview if needed
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            sed -i "s|metadata.json|pr-preview/${{ github.event.number }}/metadata.json|g" build/index.html
+          fi
+
       - name: Process markdown files and generate metadata
         id: process
         run: |
@@ -135,6 +144,25 @@ jobs:
             echo "has_changes=true" >> $GITHUB_OUTPUT
           else
             echo "has_changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Validate build
+        run: |
+          # Check if required files exist
+          if [[ ! -f "build/index.html" ]]; then
+            echo "Error: index.html not found in build directory"
+            exit 1
+          fi
+          
+          if [[ ! -f "build/metadata.json" ]]; then
+            echo "Error: metadata.json not found in build directory"
+            exit 1
+          fi
+          
+          # Validate metadata.json
+          if ! jq empty build/metadata.json; then
+            echo "Error: metadata.json is not valid JSON"
+            exit 1
           fi
 
       - name: Commit metadata if changed
