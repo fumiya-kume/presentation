@@ -1,0 +1,67 @@
+name: marp-to-pages
+concurrency: marp-to-pages
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - closed
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Ensure build dir exists
+        run: mkdir -p build
+
+      - name: Process DB history in Mobile presentation
+        uses: docker://marpteam/marp-cli:v3.0.2
+        with:
+          args: '"DB history in Mobile/presentation.md" -o "build/DB history in Mobile/presentation.html" --allow-local-files'
+        env:
+          MARP_USER: root:root
+
+      - name: Copy images for DB history
+        run: |
+          mkdir -p "build/DB history in Mobile"
+          cp "DB history in Mobile/"*.png "build/DB history in Mobile/" || true
+
+      - name: Generate PDF for DB history
+        uses: docker://marpteam/marp-cli:v3.0.2
+        with:
+          args: '"DB history in Mobile/presentation.md" --allow-local-files -o "build/DB history in Mobile/presentation.pdf"'
+        env:
+          MARP_USER: root:root
+
+      - name: Generate PPTX for DB history
+        uses: docker://marpteam/marp-cli:v3.0.2
+        with:
+          args: '"DB history in Mobile/presentation.md" --allow-local-files -o "build/DB history in Mobile/presentation.pptx"'
+        env:
+          MARP_USER: root:root
+
+      - name: Deploy preview
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: rossjrw/pr-preview-action@v1
+        with:
+          source-dir: ./build/
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
+
+      - name: Deploy production
+        if: ${{ github.event_name == 'push' }}
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: ./build/
+          clean-exclude: pr-preview/ 
