@@ -2,6 +2,18 @@
 
 This repository contains various presentations created using Marp.
 
+## View Presentations
+
+You can browse all presentations at our GitHub Pages site:
+- Production: https://fumiya-kume.github.io/presentation/
+- PR Previews: https://fumiya-kume.github.io/presentation/pr-preview/{PR_NUMBER}/
+
+The index page provides:
+- List of all presentations with descriptions
+- Links to HTML and PDF versions
+- Last modified dates
+- Dark mode support
+
 ## Marp Workflow
 
 This repository uses GitHub Actions to automatically generate HTML, PDF, and PPTX versions of all Marp presentations. The workflow:
