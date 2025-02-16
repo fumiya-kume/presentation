@@ -46,7 +46,12 @@
                                 <i class="fab fa-linkedin text-xl"></i>
                             </a>
                         </div>
-                        <dark-mode-toggle></dark-mode-toggle>
+                        <button 
+                            id="darkModeToggle"
+                            class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 transition-all duration-200 w-10 h-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            aria-label="Toggle dark mode">
+                            <i class="fas fa-moon text-xl"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -119,6 +124,36 @@
         <app-footer></app-footer>
     </div>
 
-    <script src="detail.js" type="module"></script>
+    <script type="module">
+        // Initialize dark mode from localStorage or system preference
+        const isDark = localStorage.getItem('darkMode') === 'true' ||
+            (!localStorage.getItem('darkMode') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (isDark) {
+            document.documentElement.classList.add('dark');
+        }
+
+        // Dark mode toggle functionality
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const darkModeIcon = darkModeToggle.querySelector('i');
+
+        function updateDarkModeIcon(isDark) {
+            darkModeIcon.className = isDark ? 'fas fa-sun text-xl' : 'fas fa-moon text-xl';
+            darkModeToggle.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+            darkModeToggle.setAttribute('title', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+        }
+
+        // Set initial icon state
+        updateDarkModeIcon(isDark);
+
+        // Handle dark mode toggle
+        darkModeToggle.addEventListener('click', () => {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('darkMode', isDark);
+            updateDarkModeIcon(isDark);
+        });
+
+        // Import detail.js functionality
+        import './detail.js';
+    </script>
 </body>
 </html>
