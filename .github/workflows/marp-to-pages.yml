@@ -40,8 +40,8 @@ jobs:
       - name: Process markdown files
         run: |
           echo "Files to process: ${{ steps.find-md.outputs.files }}"
-          for file in $(echo '${{ steps.find-md.outputs.files }}' | jq -r '.[]'); do
-            echo "Processing $file..."
+          while IFS= read -r file; do
+            echo "Processing: ${file}"
             dir="$(dirname "${file}")"
             filename="$(basename "${file}")"
             filename="${filename%.md}"  # Remove .md extension after basename
@@ -64,7 +64,7 @@ jobs:
             # Generate PPTX
             docker run --rm -u root:root -v "$(pwd):/work" -w /work marpteam/marp-cli:v3.0.2 \
               "/work/${file}" --allow-local-files -o "/work/${target_dir}/${filename}.pptx"
-          done
+          done < <(echo '${{ steps.find-md.outputs.files }}' | jq -r '.[]')
 
       - name: Deploy preview
         if: ${{ github.event_name == 'pull_request' }}
