@@ -13,4 +13,7 @@ Thumbs.db
 # Cursor temporary files
 .github/pr-description.md
 .git-commit-message.md
-.git-rebase-todo.md 
+.git-rebase-todo.md
+
+# Planning and todo files
+todo/ 
