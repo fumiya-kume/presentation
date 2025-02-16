@@ -18,7 +18,8 @@ The index page provides:
 
 This repository uses GitHub Actions to automatically generate HTML, PDF, and PPTX versions of all Marp presentations. The workflow is designed to be simple for contributors while maintaining high-quality output.
 
-### How It Works
+<details>
+<summary><strong>How It Works</strong></summary>
 
 1. **Automatic Detection**
    - The workflow automatically detects Markdown files containing `marp: true` in their frontmatter
@@ -41,8 +42,10 @@ This repository uses GitHub Actions to automatically generate HTML, PDF, and PPT
      - Creates preview deployments
      - Available at https://fumiya-kume.github.io/presentation/pr-preview/{PR_NUMBER}/
      - Automatically cleaned up when PR is closed
+</details>
 
-### Creating a Presentation
+<details>
+<summary><strong>Creating a Presentation</strong></summary>
 
 1. Create a new directory for your presentation:
    ```bash
@@ -82,8 +85,10 @@ This repository uses GitHub Actions to automatically generate HTML, PDF, and PPT
    git commit -m "Add my presentation"
    git push
    ```
+</details>
 
-### Directory Structure
+<details>
+<summary><strong>Directory Structure</strong></summary>
 
 - Each presentation should be in its own directory
 - Keep images in the same directory as the markdown file
@@ -105,10 +110,10 @@ repository/
     ├── slides.md
     └── screenshot.png
 ```
+</details>
 
-### Local Preview
-
-To preview presentations locally:
+<details>
+<summary><strong>Local Preview</strong></summary>
 
 1. Install Marp CLI:
    ```bash
@@ -131,8 +136,10 @@ To preview presentations locally:
    ```bash
    marp -w path/to/presentation.md
    ```
+</details>
 
-### Troubleshooting
+<details>
+<summary><strong>Troubleshooting</strong></summary>
 
 1. **Images not showing up:**
    - Ensure images are in the same directory or a subdirectory
@@ -148,6 +155,7 @@ To preview presentations locally:
    - Check PR build logs
    - Verify markdown frontmatter includes `marp: true`
    - Ensure images are committed
+</details>
 
 ## Available Presentations
 
