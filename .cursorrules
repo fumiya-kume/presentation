@@ -1,0 +1,92 @@
+{
+  "project": {
+    "structure": {
+      "components": {
+        "path": "./components",
+        "naming": "kebab-case",
+        "required_files": [
+          "index.js",
+          "styles.css",
+          "README.md"
+        ]
+      },
+      "assets": {
+        "path": "./assets",
+        "allowed_types": [".png", ".jpg", ".svg"]
+      }
+    }
+  },
+  "components": {
+    "framework": "web-components",
+    "style": {
+      "framework": "tailwind",
+      "strategy": "shared-styles"
+    },
+    "documentation": {
+      "required": true
+    }
+  },
+  "testing": {
+    "unit": {
+      "framework": "jest",
+      "coverage": {
+        "statements": 80,
+        "branches": 80,
+        "functions": 80,
+        "lines": 80
+      }
+    },
+    "e2e": {
+      "framework": "playwright",
+      "browsers": ["chromium", "firefox", "webkit"]
+    }
+  },
+  "ci": {
+    "workflows": {
+      "pr": {
+        "checks": ["build", "test", "lint"],
+        "preview": true
+      },
+      "master": {
+        "deploy": true,
+        "tag": true
+      }
+    }
+  },
+  "style": {
+    "javascript": {
+      "standard": "eslint:recommended",
+      "prettier": true
+    },
+    "css": {
+      "standard": "stylelint-config-standard",
+      "prettier": true
+    }
+  },
+  "git": {
+    "branches": {
+      "pattern": "{type}/{description}",
+      "types": ["feature", "fix", "docs", "style", "refactor", "test", "chore"]
+    },
+    "commits": {
+      "pattern": "{type}: {description}",
+      "types": ["feat", "fix", "docs", "style", "refactor", "test", "chore"]
+    }
+  },
+  "docs": {
+    "components": {
+      "required": ["README.md", "USAGE.md"],
+      "api": "JSDoc"
+    },
+    "changelog": {
+      "file": "CHANGELOG.md",
+      "standard": "conventional-changelog"
+    }
+  },
+  "ignore": [
+    ".github/pr-description.md",
+    ".git-commit-message.md",
+    ".git-rebase-todo.md",
+    "todo/"
+  ]
+} 
