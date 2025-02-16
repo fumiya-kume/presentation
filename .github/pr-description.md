@@ -135,4 +135,28 @@ The files are removed using `git rm --cached` to:
 
 - Verify that the files are removed from git tracking
 - Confirm that local files still exist
-- Check that future commits don't include these files 
+- Check that future commits don't include these files
+
+# Add Todo Directory to Gitignore
+
+This PR adds the todo directory to .gitignore to keep planning and task management files out of version control.
+
+## Changes
+
+- Add `todo/` pattern to .gitignore
+- Ensure planning and task management files stay local
+- Keep repository focused on actual code and documentation
+
+## Implementation Details
+
+Added to .gitignore:
+```
+# Planning and todo files
+todo/
+```
+
+## Testing
+
+- Verify that todo directory is ignored
+- Confirm that new todo files are not tracked
+- Check that existing todo files remain local 
