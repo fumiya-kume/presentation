@@ -37,6 +37,8 @@ jobs:
           mkdir -p build
           # Copy detail page files
           cp -r detail/* build/
+          # Copy components directory
+          cp -r components build/
 
       - name: Copy index page
         run: |
@@ -163,6 +165,31 @@ jobs:
             echo "Error: metadata.json not found in build directory"
             exit 1
           fi
+          
+          # Check if components directory exists
+          if [[ ! -d "build/components" ]]; then
+            echo "Error: components directory not found in build directory"
+            exit 1
+          fi
+          
+          # Check if required component files exist
+          required_components=(
+            "components/index.js"
+            "components/base-component.js"
+            "components/header-component.js"
+            "components/footer-component.js"
+            "components/dark-mode-toggle.js"
+            "components/loading-states.js"
+            "components/presentation-card.js"
+            "components/registry.js"
+          )
+          
+          for component in "${required_components[@]}"; do
+            if [[ ! -f "build/$component" ]]; then
+              echo "Error: $component not found in build directory"
+              exit 1
+            fi
+          done
           
           # Validate metadata.json
           if ! jq empty build/metadata.json; then
