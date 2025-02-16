@@ -1,0 +1,27 @@
+{
+  "name": "presentation",
+  "version": "1.0.0",
+  "description": "This repository contains various presentations created using Marp.",
+  "main": "index.js",
+  "scripts": {
+    "build:css": "tailwindcss -i ./components/styles/tailwind.css -o ./components/styles/components.css",
+    "watch:css": "tailwindcss -i ./components/styles/tailwind.css -o ./components/styles/components.css --watch",
+    "dev": "npm run watch:css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/fumiya-kume/presentation.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fumiya-kume/presentation/issues"
+  },
+  "homepage": "https://github.com/fumiya-kume/presentation#readme",
+  "devDependencies": {
+    "autoprefixer": "^10.4.17",
+    "postcss": "^8.4.35",
+    "tailwindcss": "^3.4.1"
+  }
+}
