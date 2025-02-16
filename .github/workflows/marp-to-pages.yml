@@ -168,11 +168,24 @@ jobs:
       - name: Commit metadata if changed
         if: steps.process.outputs.has_changes == 'true'
         run: |
+          # Configure git
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
+          
+          # Get current branch name or use master for detached HEAD
+          BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+          if [ "$BRANCH_NAME" = "HEAD" ]; then
+            if [ "${{ github.event_name }}" = "pull_request" ]; then
+              BRANCH_NAME="${{ github.head_ref }}"
+            else
+              BRANCH_NAME="master"
+            fi
+          fi
+          
+          # Commit and push changes
           git add metadata.json
           git commit -m "Update metadata.json [skip ci]"
-          git push
+          git push origin HEAD:$BRANCH_NAME
 
       - name: Deploy preview
         if: ${{ github.event_name == 'pull_request' }}
