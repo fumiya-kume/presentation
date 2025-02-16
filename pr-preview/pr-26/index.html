@@ -18,25 +18,21 @@
         }
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script type="module" src="components/registry.js"></script>
 </head>
 <body class="h-full bg-white dark:bg-gray-900 transition-colors duration-200">
     <div class="min-h-full flex flex-col">
         <!-- Header -->
-        <header class="bg-white dark:bg-gray-800 shadow">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
-                    <i class="fas fa-file-powerpoint mr-2"></i>
-                    Kuu's Presentations
-                </h1>
-                <div class="flex items-center space-x-4">
-                    <social-buttons>
-                        <twitter-button url="https://x.com/Fumiya_Kume"></twitter-button>
-                        <linkedin-button url="https://www.linkedin.com/in/kuu-sushi/"></linkedin-button>
-                    </social-buttons>
-                    <dark-mode-toggle></dark-mode-toggle>
-                </div>
+        <app-header>
+            <span slot="title">Kuu's Presentations</span>
+            <div slot="actions">
+                <social-buttons>
+                    <twitter-button url="https://x.com/Fumiya_Kume"></twitter-button>
+                    <linkedin-button url="https://www.linkedin.com/in/kuu-sushi/"></linkedin-button>
+                </social-buttons>
+                <dark-mode-toggle></dark-mode-toggle>
             </div>
-        </header>
+        </app-header>
 
         <!-- Main Content -->
         <main class="flex-grow">
@@ -76,47 +72,16 @@
         </main>
 
         <!-- Footer -->
-        <footer class="bg-white dark:bg-gray-800 shadow">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                <div class="flex justify-between items-center">
-                    <p class="text-gray-600 dark:text-gray-400">
-                        <a href="https://github.com/fumiya-kume/presentation" class="hover:text-gray-900 dark:hover:text-white">
-                            <i class="fab fa-github mr-2"></i>
-                            View on GitHub
-                        </a>
-                    </p>
-                    <p class="text-gray-500 dark:text-gray-400 text-sm">
-                        <a href="https://github.com/marp-team/marp" class="hover:text-gray-900 dark:hover:text-white">
-                            Built with Marp
-                        </a>
-                    </p>
-                </div>
-            </div>
-        </footer>
+        <app-footer></app-footer>
     </div>
 
-    <script>
-        // Dark mode toggle
-        const darkModeToggle = document.getElementById('darkModeToggle');
-        const moonIcon = darkModeToggle.querySelector('i');
-
-        function updateDarkModeIcon(isDark) {
-            moonIcon.className = isDark ? 'fas fa-sun text-white' : 'fas fa-moon';
-        }
-
-        darkModeToggle.addEventListener('click', () => {
-            const isDark = document.documentElement.classList.toggle('dark');
-            localStorage.setItem('darkMode', isDark);
-            updateDarkModeIcon(isDark);
-        });
-
+    <script type="module">
         // Initialize dark mode from localStorage or system preference
         const isDark = localStorage.getItem('darkMode') === 'true' ||
             (!localStorage.getItem('darkMode') && window.matchMedia('(prefers-color-scheme: dark)').matches);
         if (isDark) {
             document.documentElement.classList.add('dark');
         }
-        updateDarkModeIcon(isDark);
 
         // Utility functions
         function formatDate(dateString) {
