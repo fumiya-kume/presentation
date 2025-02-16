@@ -31,7 +31,7 @@ class PresentationState {
 
     async loadPresentations() {
         try {
-            const response = await fetch('metadata.json');  // Updated path
+            const response = await fetch('metadata.json');  // Fixed path
             if (!response.ok) {
                 throw new Error(`Failed to load metadata (Status: ${response.status})`);
             }
