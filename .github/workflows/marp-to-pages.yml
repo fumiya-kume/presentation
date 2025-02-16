@@ -30,27 +30,26 @@ jobs:
           echo "Found files: $files"
           echo "files=$files" >> $GITHUB_OUTPUT
 
+      - name: Create build directory
+        run: mkdir -p build
+
       - name: Process markdown files
         run: |
-          # Create build directory with proper permissions
-          mkdir -p build
-          chmod 777 build
-
-          # Function to generate output in different formats
+          # Function to generate output in different formats using GitHub Actions' Docker support
           generate_output() {
             local input="$1" output="$2"
             local output_dir=$(dirname "$output")
             
             echo "Generating $output from $input"
-            echo "Ensuring output directory $output_dir exists with proper permissions"
+            echo "Ensuring output directory $output_dir exists"
             mkdir -p "$output_dir"
-            chmod 777 "$output_dir"
             
-            docker run --rm -u root:root \
+            docker run --rm \
               -v "$(pwd):/work" \
               -w /work \
+              -e MARP_USER="root:root" \
               marpteam/marp-cli:v3.0.2 \
-              "/work/${input}" -o "/work/${output}" --allow-local-files
+              "/work/${input}" --allow-local-files -o "/work/${output}"
           }
 
           # Function to copy images
@@ -58,9 +57,10 @@ jobs:
             local src="$1" dst="$2"
             echo "Copying images from $src to $dst"
             mkdir -p "$dst"
-            chmod 777 "$dst"
-            find "$src" -maxdepth 1 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.gif" \) \
-              -exec cp {} "$dst/" \;
+            if [ -d "$src" ]; then
+              find "$src" -maxdepth 1 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.gif" \) \
+                -exec cp {} "$dst/" \;
+            fi
           }
 
           # Process each markdown file
@@ -73,7 +73,6 @@ jobs:
             filename=$(basename "$file" .md)
             target_dir="build/${dir}"
             mkdir -p "$target_dir"
-            chmod 777 "$target_dir"
             
             # Copy images
             copy_images "$dir" "$target_dir"
