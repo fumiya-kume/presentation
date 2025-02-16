@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Needed for git log to work properly
 
       - name: Find Marp markdown files
         id: find-md
@@ -33,7 +35,8 @@ jobs:
       - name: Create build directory
         run: mkdir -p build
 
-      - name: Process markdown files
+      - name: Process markdown files and generate metadata
+        id: process
         run: |
           # Function to generate output in different formats using GitHub Actions' Docker support
           generate_output() {
@@ -63,8 +66,44 @@ jobs:
             fi
           }
 
+          # Function to extract metadata from markdown
+          extract_metadata() {
+            local file="$1"
+            local title description
+            
+            # Extract title (first h1)
+            title=$(grep -m 1 "^# " "$file" | sed 's/^# //')
+            
+            # Extract description (first paragraph after title)
+            description=$(awk '/^# /{p=1;next} p&&/^[^#]/{print;exit}' "$file" | tr -d '\n')
+            
+            # Get last modified date
+            lastModified=$(git log -1 --format=%aI "$file")
+            
+            # Output as JSON
+            jq -n \
+              --arg title "$title" \
+              --arg path "${file%.*}" \
+              --arg description "$description" \
+              --arg lastModified "$lastModified" \
+              '{
+                title: $title,
+                path: $path,
+                description: $description,
+                lastModified: $lastModified,
+                formats: {
+                  html: ($path + ".html"),
+                  pdf: ($path + ".pdf")
+                }
+              }'
+          }
+
           # Process each markdown file
           echo "Files to process: ${{ steps.find-md.outputs.files }}"
+          
+          # Initialize metadata array
+          echo '{"presentations":[]}' > metadata.json
+          
           while IFS= read -r file; do
             echo "Processing: ${file}"
             
@@ -81,7 +120,31 @@ jobs:
             generate_output "$file" "${target_dir}/${filename}.html"
             generate_output "$file" "${target_dir}/${filename}.pdf"
             generate_output "$file" "${target_dir}/${filename}.pptx"
+            
+            # Extract and add metadata
+            metadata=$(extract_metadata "$file")
+            jq --argjson meta "$metadata" '.presentations += [$meta]' metadata.json > metadata.json.tmp
+            mv metadata.json.tmp metadata.json
           done < <(echo '${{ steps.find-md.outputs.files }}' | jq -r '.[]')
+          
+          # Copy metadata.json to build directory
+          cp metadata.json build/
+          
+          # Check if metadata has changed
+          if ! git diff --quiet metadata.json; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit metadata if changed
+        if: steps.process.outputs.has_changes == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add metadata.json
+          git commit -m "Update metadata.json [skip ci]"
+          git push
 
       - name: Deploy preview
         if: ${{ github.event_name == 'pull_request' }}
