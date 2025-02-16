@@ -12,6 +12,18 @@
                 extend: {
                     animation: {
                         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    colors: {
+                        primary: {
+                            DEFAULT: '#3f0011',
+                            dark: '#A0DBC8',
+                            light: '#D5FFEE'
+                        },
+                        accent: {
+                            DEFAULT: '#3f0011',
+                            dark: '#CC000E',
+                            light: '#C0FFEE'
+                        }
                     }
                 }
             }
@@ -22,29 +34,29 @@
 <body class="h-full bg-white dark:bg-gray-900 transition-colors duration-200">
     <div class="min-h-full flex flex-col">
         <!-- Header -->
-        <header class="bg-white dark:bg-gray-800 shadow">
+        <header class="bg-white dark:bg-gray-800 shadow border-b border-primary">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
                 <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
-                    <i class="fas fa-file-powerpoint mr-2"></i>
+                    <i class="fas fa-file-powerpoint mr-2 text-primary"></i>
                     Kuu's Presentations
                 </h1>
                 <div class="flex items-center space-x-4">
-                    <a href="https://x.com/Fumiya_Kume" 
-                       class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-                       title="Follow on X (Twitter)"
-                       target="_blank"
-                       rel="noopener noreferrer">
-                        <i class="fab fa-x-twitter"></i>
-                    </a>
                     <a href="https://www.linkedin.com/in/kuu-sushi/" 
-                       class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                       class="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light transition-colors"
                        title="Connect on LinkedIn"
                        target="_blank"
                        rel="noopener noreferrer">
                         <i class="fab fa-linkedin"></i>
                     </a>
-                    <button id="darkModeToggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
-                        <i class="fas fa-moon dark:text-white"></i>
+                    <a href="https://twitter.com/Fumiya_Kume/" 
+                       class="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light transition-colors"
+                       title="Follow on X (Twitter)"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <button id="darkModeToggle" class="p-2 rounded-lg hover:bg-primary-light dark:hover:bg-gray-700 text-primary dark:text-white">
+                        <i class="fas fa-moon"></i>
                     </button>
                 </div>
             </div>
@@ -161,11 +173,11 @@
         // Presentation card template
         function createPresentationCard(presentation) {
             return `
-                <article class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-200">
+                <article class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-200 border border-gray-100 hover:border-primary dark:border-gray-700 dark:hover:border-primary-dark">
                     <div class="p-6">
                         <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
                             <a href="detail.html?id=${encodeURIComponent(presentation.path)}" 
-                               class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                               class="hover:text-primary dark:hover:text-primary-light transition-colors">
                                 ${escapeHtml(presentation.title)}
                             </a>
                         </h2>
@@ -178,17 +190,17 @@
                             </time>
                             <div class="space-x-2">
                                 <a href="detail.html?id=${encodeURIComponent(presentation.path)}" 
-                                   class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+                                   class="text-primary dark:text-primary-light hover:text-primary-dark dark:hover:text-primary transition-colors"
                                    title="View Details">
                                     <i class="fas fa-info-circle"></i>
                                 </a>
                                 <a href="${presentation.formats.html}" 
-                                   class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+                                   class="text-primary dark:text-primary-light hover:text-primary-dark dark:hover:text-primary transition-colors"
                                    title="View Online">
                                     <i class="fas fa-globe"></i>
                                 </a>
                                 <a href="${presentation.formats.pdf}" 
-                                   class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition-colors"
+                                   class="text-accent dark:text-accent-light hover:text-accent-dark dark:hover:text-accent transition-colors"
                                    title="Download PDF">
                                     <i class="fas fa-file-pdf"></i>
                                 </a>
