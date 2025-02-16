@@ -58,7 +58,7 @@ jobs:
             local output_dir=$(dirname "$output")
             
             echo "Generating $output from $input"
-            echo "Ensuring output directory --html $output_dir exists"
+            echo "Ensuring output directory $output_dir exists"
             mkdir -p "$output_dir"
             
             docker run --rm \
@@ -66,7 +66,7 @@ jobs:
               -w /work \
               -e MARP_USER="root:root" \
               marpteam/marp-cli:v4.1.1 \
-              "/work/${input}" --allow-local-files -o "/work/${output}"
+              "/work/${input}" --allow-local-files --og-image --html  -o "/work/${output}"
           }
 
           # Function to copy images
