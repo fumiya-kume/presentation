@@ -146,7 +146,8 @@
                 <article class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-200">
                     <div class="p-6">
                         <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                            <a href="${presentation.formats.html}" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                            <a href="detail.html?id=${encodeURIComponent(presentation.path)}" 
+                               class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                                 ${escapeHtml(presentation.title)}
                             </a>
                         </h2>
@@ -158,6 +159,11 @@
                                 ${formatDate(presentation.lastModified)}
                             </time>
                             <div class="space-x-2">
+                                <a href="detail.html?id=${encodeURIComponent(presentation.path)}" 
+                                   class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+                                   title="View Details">
+                                    <i class="fas fa-info-circle"></i>
+                                </a>
                                 <a href="${presentation.formats.html}" 
                                    class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
                                    title="View Online">
