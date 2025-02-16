@@ -180,7 +180,7 @@ class DetailPageController {
 
     renderPresentation(presentation) {
         // Update metadata
-        document.title = `${presentation.title} | Marp Collection`;
+        document.title = `${presentation.title} | Kuu's Presentations`;
         this.elements.title.textContent = presentation.title;
         this.elements.description.textContent = presentation.description;
         this.elements.lastModified.textContent = formatDate(presentation.lastModified);
