@@ -30,9 +30,12 @@ export class DarkModeToggle extends BaseComponent {
           padding: 0.5rem;
           border-radius: 0.375rem;
           background: transparent;
+          border: none;
           cursor: pointer;
           transition: background-color 200ms;
           color: rgb(75 85 99); /* text-gray-600 */
+          font-size: 1.25rem;
+          line-height: 1;
         }
 
         button:hover {
@@ -46,8 +49,15 @@ export class DarkModeToggle extends BaseComponent {
         :host-context(.dark) button:hover {
           background-color: rgb(55 65 81); /* dark:bg-gray-700 */
         }
+
+        i {
+          display: inline-block;
+          width: 1em;
+          height: 1em;
+          vertical-align: -0.125em;
+        }
       </style>
-      <button aria-label="Toggle dark mode">
+      <button aria-label="Toggle dark mode" title="Toggle dark mode">
         <i class="fas ${this._isDark ? 'fa-sun' : 'fa-moon'}"></i>
       </button>
     `;

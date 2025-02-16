@@ -51,6 +51,12 @@ export class HeaderComponent extends BaseComponent {
           align-items: center;
           gap: 1rem;
         }
+
+        ::slotted([slot="actions"]) {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+        }
       </style>
       <div class="header-content">
         <h1>

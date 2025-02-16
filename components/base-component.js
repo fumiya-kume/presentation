@@ -6,6 +6,23 @@ export class BaseComponent extends HTMLElement {
 
   async connectedCallback() {
     await this.loadStyles();
+    await this.loadFontAwesome();
+  }
+
+  async loadFontAwesome() {
+    // Check if Font Awesome is already loaded in shadow root
+    if (!this.shadowRoot.querySelector('#font-awesome')) {
+      const link = document.createElement('link');
+      link.id = 'font-awesome';
+      link.rel = 'stylesheet';
+      link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css';
+      this.shadowRoot.appendChild(link);
+
+      // Wait for Font Awesome to load
+      await new Promise((resolve) => {
+        link.onload = resolve;
+      });
+    }
   }
 
   async loadStyles() {
