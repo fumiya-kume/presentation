@@ -26,7 +26,7 @@ jobs:
         run: |
           # Find all Marp markdown files and convert to JSON array
           files=$(find . -type f -name "*.md" ! -path "./.github/*" ! -path "./build/*" -exec grep -l "marp: true" {} \; | \
-                 sed -e 's|^\./||' -e 's/ /-/g' | jq -R -s -c 'split("\n")[:-1]')
+                 sed -e 's|^\./||' | jq -R -s -c 'split("\n")[:-1]')
           echo "Found files: $files"
           echo "files=$files" >> $GITHUB_OUTPUT
 
@@ -35,23 +35,23 @@ jobs:
           # Function to generate output in different formats
           generate_output() {
             local input="$1" output="$2"
+            echo "Generating $output from $input"
             docker run --rm -u root:root -v "$(pwd):/work" -w /work marpteam/marp-cli:v3.0.2 \
               "/work/${input}" -o "/work/${output}" --allow-local-files
           }
 
-          # Function to process images
+          # Function to copy images
           copy_images() {
             local src="$1" dst="$2"
+            echo "Copying images from $src to $dst"
             find "$src" -maxdepth 1 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.gif" \) \
-              -exec sh -c 'cp "$1" "'"$dst"'/$(basename "$1" | sed "s/ /-/g")"' sh {} \;
+              -exec cp {} "$dst/" \;
           }
 
           # Process each markdown file
           echo "Files to process: ${{ steps.find-md.outputs.files }}"
           while IFS= read -r file; do
             echo "Processing: ${file}"
-            # Get source file path (with spaces)
-            src_file=$(echo "$file" | sed 's/-/ /g')
             
             # Prepare directories
             dir=$(dirname "$file")
@@ -60,20 +60,12 @@ jobs:
             mkdir -p "$target_dir"
             
             # Copy images
-            src_dir=$(dirname "$src_file")
-            copy_images "$src_dir" "$target_dir"
-            
-            # Copy and rename markdown file
-            mkdir -p "$(dirname "$file")"
-            cp "$src_file" "$file"
+            copy_images "$dir" "$target_dir"
             
             # Generate all formats
             generate_output "$file" "${target_dir}/${filename}.html"
             generate_output "$file" "${target_dir}/${filename}.pdf"
             generate_output "$file" "${target_dir}/${filename}.pptx"
-            
-            # Clean up temporary markdown file
-            rm "$file"
           done < <(echo '${{ steps.find-md.outputs.files }}' | jq -r '.[]')
 
       - name: Deploy preview
