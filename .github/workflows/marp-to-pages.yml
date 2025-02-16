@@ -24,31 +24,36 @@ jobs:
       - name: Ensure build dir exists
         run: mkdir -p build
 
-      - name: Process DB history in Mobile presentation
-        uses: docker://marpteam/marp-cli:v3.0.2
-        with:
-          args: '"DB history in Mobile/presentation.md" -o "build/DB history in Mobile/presentation.html" --allow-local-files'
-        env:
-          MARP_USER: root:root
-
-      - name: Copy images for DB history
+      - name: Find markdown files
+        id: find-md
         run: |
-          mkdir -p "build/DB history in Mobile"
-          cp "DB history in Mobile/"*.png "build/DB history in Mobile/" || true
+          echo "files=$(find . -type f -name "*.md" ! -path "./.github/*" ! -path "./build/*" -exec realpath --relative-to=. {} \; | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
 
-      - name: Generate PDF for DB history
-        uses: docker://marpteam/marp-cli:v3.0.2
-        with:
-          args: '"DB history in Mobile/presentation.md" --allow-local-files -o "build/DB history in Mobile/presentation.pdf"'
-        env:
-          MARP_USER: root:root
-
-      - name: Generate PPTX for DB history
-        uses: docker://marpteam/marp-cli:v3.0.2
-        with:
-          args: '"DB history in Mobile/presentation.md" --allow-local-files -o "build/DB history in Mobile/presentation.pptx"'
-        env:
-          MARP_USER: root:root
+      - name: Process markdown files
+        run: |
+          for file in $(echo '${{ steps.find-md.outputs.files }}' | jq -r '.[]'); do
+            dir=$(dirname "$file")
+            filename=$(basename "$file" .md)
+            target_dir="build/$dir"
+            
+            # Create target directory
+            mkdir -p "$target_dir"
+            
+            # Copy all images from the source directory
+            find "$dir" -maxdepth 1 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.gif" \) -exec cp {} "$target_dir/" \;
+            
+            # Generate HTML
+            docker run --rm -u root:root -v $PWD:/work -w /work marpteam/marp-cli:v3.0.2 \
+              "$file" -o "$target_dir/$filename.html" --allow-local-files
+            
+            # Generate PDF
+            docker run --rm -u root:root -v $PWD:/work -w /work marpteam/marp-cli:v3.0.2 \
+              "$file" --allow-local-files -o "$target_dir/$filename.pdf"
+            
+            # Generate PPTX
+            docker run --rm -u root:root -v $PWD:/work -w /work marpteam/marp-cli:v3.0.2 \
+              "$file" --allow-local-files -o "$target_dir/$filename.pptx"
+          done
 
       - name: Deploy preview
         if: ${{ github.event_name == 'pull_request' }}

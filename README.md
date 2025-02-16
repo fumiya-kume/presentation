@@ -10,14 +10,20 @@ This repository uses GitHub Actions to automatically generate HTML, PDF, and PPT
    - Push to main/master branch
    - Pull request events (open, reopen, sync, close)
 
-2. Generates the following for each presentation:
-   - HTML version for web viewing
-   - PDF version for download/printing
-   - PPTX version for PowerPoint compatibility
+2. Automatically processes all markdown files in the repository:
+   - Maintains the original directory structure
+   - Copies associated images
+   - Generates HTML, PDF, and PPTX versions
 
 3. Deploys to GitHub Pages:
    - PR previews are available under the pr-preview directory
    - Production deployments go to the root of gh-pages branch
+
+### Directory Structure
+
+- Place your Marp markdown files in any directory
+- Keep images in the same directory as the markdown file
+- Supported image formats: PNG, JPG, JPEG, GIF
 
 ### Local Preview
 
@@ -28,19 +34,16 @@ To preview presentations locally:
    npm install -g @marp-team/marp-cli
    ```
 
-2. Generate HTML:
+2. Generate outputs (replace `path/to/presentation.md` with your file path):
    ```bash
-   marp "DB history in Mobile/presentation.md" -o "DB history in Mobile/presentation.html"
-   ```
+   # Generate HTML
+   marp path/to/presentation.md -o path/to/presentation.html
 
-3. Generate PDF:
-   ```bash
-   marp "DB history in Mobile/presentation.md" --allow-local-files -o "DB history in Mobile/presentation.pdf"
-   ```
+   # Generate PDF
+   marp path/to/presentation.md --allow-local-files -o path/to/presentation.pdf
 
-4. Generate PPTX:
-   ```bash
-   marp "DB history in Mobile/presentation.md" --allow-local-files -o "DB history in Mobile/presentation.pptx"
+   # Generate PPTX
+   marp path/to/presentation.md --allow-local-files -o path/to/presentation.pptx
    ```
 
 ## Available Presentations
