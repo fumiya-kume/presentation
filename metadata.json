@@ -9,16 +9,6 @@
         "html": "DB history in Mobile App/presentation.html",
         "pdf": "DB history in Mobile App/presentation.pdf"
       }
-    },
-    {
-      "title": "Presentations",
-      "path": "README",
-      "description": "This repository contains various presentations created using Marp.",
-      "lastModified": "2025-02-16T16:33:50+09:00",
-      "formats": {
-        "html": "README.html",
-        "pdf": "README.pdf"
-      }
     }
   ]
 }
