@@ -41,6 +41,7 @@ jobs:
       - name: Copy index page
         run: |
           cp index.html build/
+          cp icon.jpg build/
           
           # Update paths for preview if needed
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
