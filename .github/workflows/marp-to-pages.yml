@@ -23,6 +23,18 @@ jobs:
         with:
           fetch-depth: 0  # Needed for git log to work properly
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build CSS
+        run: npm run build:css
+
       - name: Find Marp markdown files
         id: find-md
         run: |
@@ -37,6 +49,8 @@ jobs:
           mkdir -p build
           # Copy detail page files
           cp -r detail/* build/
+          # Copy components directory
+          cp -r components build/
 
       - name: Copy index page
         run: |
