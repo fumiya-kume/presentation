@@ -11,49 +11,41 @@
 </head>
 <body class="h-full bg-white dark:bg-gray-900 transition-colors duration-200">
     <div class="min-h-full flex flex-col">
-        <!-- Header with breadcrumb -->
-        <header class="bg-white dark:bg-gray-800 shadow">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                <div class="flex justify-between items-center">
-                    <nav class="flex" aria-label="Breadcrumb">
-                        <ol class="flex items-center space-x-4">
-                            <li>
-                                <a href="../index.html" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-                                    <i class="fas fa-home"></i>
-                                    Kuu's Presentations
-                                </a>
-                            </li>
-                            <li class="flex items-center">
-                                <i class="fas fa-chevron-right text-gray-400"></i>
-                                <span id="presentationPath" class="ml-4 text-gray-900 dark:text-white font-medium"></span>
-                            </li>
-                        </ol>
-                    </nav>
-                    <div class="flex items-center space-x-4">
-                        <a href="https://x.com/Fumiya_Kume" 
-                           class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
-                           target="_blank"
-                           rel="noopener noreferrer"
-                           title="Follow on X (Twitter)">
-                            <i class="fab fa-x-twitter text-xl"></i>
-                        </a>
-                        <a href="https://www.linkedin.com/in/kuu-sushi/" 
-                           class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
-                           target="_blank"
-                           rel="noopener noreferrer"
-                           title="Connect on LinkedIn">
-                            <i class="fab fa-linkedin text-xl"></i>
-                        </a>
-                        <button 
-                            id="darkModeToggle"
-                            class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 transition-all duration-200 w-10 h-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            aria-label="Toggle dark mode">
-                            <i class="fas fa-moon text-xl"></i>
-                        </button>
-                    </div>
+        <!-- Header -->
+        <app-header>
+            <span slot="title">
+                <a href="../index.html" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                    <i class="fas fa-home"></i>
+                    Kuu's Presentations
+                </a>
+                <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+                <span id="presentationPath" class="text-gray-900 dark:text-white font-medium"></span>
+            </span>
+            <div slot="actions">
+                <div class="flex items-center space-x-4">
+                    <a href="https://x.com/Fumiya_Kume" 
+                       class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       title="Follow on X (Twitter)">
+                        <i class="fab fa-x-twitter text-xl"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/in/kuu-sushi/" 
+                       class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       title="Connect on LinkedIn">
+                        <i class="fab fa-linkedin text-xl"></i>
+                    </a>
                 </div>
+                <button 
+                    id="darkModeToggle"
+                    class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 transition-all duration-200 w-10 h-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    aria-label="Toggle dark mode">
+                    <i class="fas fa-moon text-xl"></i>
+                </button>
             </div>
-        </header>
+        </app-header>
 
         <!-- Main Content -->
         <main class="flex-grow">
