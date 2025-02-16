@@ -18,6 +18,7 @@
         }
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="index.css">
     <script type="module" src="components/index.js"></script>
 </head>
 <body class="h-full bg-white dark:bg-gray-900 transition-colors duration-200">
@@ -45,16 +46,25 @@
         <main class="flex-grow">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <loading-states state="loading">
-                    <span slot="loading-text">Loading presentations...</span>
-                    <span slot="error-message">Failed to load presentations</span>
-                    <button slot="error-action" onclick="loadPresentations()" 
-                            class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
-                        Retry
-                    </button>
-                    <span slot="empty-message">No presentations found</span>
+                    <div slot="loading-text" class="loading-indicator">
+                        <i class="fas fa-circle-notch fa-spin fa-2x text-gray-600 dark:text-gray-400"></i>
+                        <p class="loading-text">Loading presentations...</p>
+                    </div>
+                    <div slot="error-message" class="error-container">
+                        <i class="fas fa-exclamation-circle fa-2x"></i>
+                        <p class="error-message">Failed to load presentations</p>
+                        <button slot="error-action" onclick="loadPresentations()" 
+                                class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+                            Retry
+                        </button>
+                    </div>
+                    <div slot="empty-message" class="empty-container">
+                        <i class="fas fa-inbox fa-2x mb-4"></i>
+                        <p>No presentations found</p>
+                    </div>
                 </loading-states>
 
-                <div id="presentationGrid" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div id="presentationGrid" class="hidden">
                     <!-- Presentations will be dynamically inserted here -->
                 </div>
             </div>
@@ -83,7 +93,15 @@
                 loadingStates.setAttribute('state', 'loading');
                 presentationGrid.classList.add('hidden');
 
-                const response = await fetch('metadata.json');
+                // Try loading from the current directory first
+                let response = await fetch('metadata.json');
+                
+                // If that fails, try the GitHub Pages path
+                if (!response.ok && window.location.hostname.includes('github.io')) {
+                    const basePath = window.location.pathname.split('/')[1]; // Should be 'presentation'
+                    response = await fetch(`/${basePath}/metadata.json`);
+                }
+
                 if (!response.ok) throw new Error('Failed to load presentations');
                 
                 const data = await response.json();
@@ -92,7 +110,12 @@
                     return;
                 }
 
-                renderPresentations(data.presentations);
+                // Sort presentations by last modified date
+                const sortedPresentations = data.presentations.sort(
+                    (a, b) => new Date(b.lastModified) - new Date(a.lastModified)
+                );
+
+                renderPresentations(sortedPresentations);
                 loadingStates.classList.add('hidden');
                 presentationGrid.classList.remove('hidden');
             } catch (error) {
