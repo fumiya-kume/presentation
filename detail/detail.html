@@ -5,8 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Presentation Details | Kuu's Presentations</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="detail.css">
+    <script type="module" src="../components/registry.js"></script>
 </head>
 <body class="h-full bg-white dark:bg-gray-900 transition-colors duration-200">
     <div class="min-h-full flex flex-col">
@@ -17,7 +30,7 @@
                     <nav class="flex" aria-label="Breadcrumb">
                         <ol class="flex items-center space-x-4">
                             <li>
-                                <a href="index.html" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                                <a href="../index.html" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
                                     <i class="fas fa-home"></i>
                                     Kuu's Presentations
                                 </a>
@@ -29,29 +42,17 @@
                         </ol>
                     </nav>
                     <div class="flex items-center space-x-4">
-                        <a href="https://x.com/Fumiya_Kume" 
-                           class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-                           title="Follow on X (Twitter)"
-                           target="_blank"
-                           rel="noopener noreferrer">
-                            <i class="fab fa-x-twitter"></i>
-                        </a>
-                        <a href="https://www.linkedin.com/in/kuu-sushi/" 
-                           class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-                           title="Connect on LinkedIn"
-                           target="_blank"
-                           rel="noopener noreferrer">
-                            <i class="fab fa-linkedin"></i>
-                        </a>
-                        <button id="darkModeToggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
-                            <i class="fas fa-moon dark:text-white"></i>
-                        </button>
+                        <sns-buttons
+                            twitter-url="https://x.com/Fumiya_Kume"
+                            linkedin-url="https://www.linkedin.com/in/kuu-sushi/"
+                        ></sns-buttons>
+                        <dark-mode-toggle></dark-mode-toggle>
                     </div>
                 </div>
             </div>
         </header>
 
-        <!-- Main content -->
+        <!-- Main Content -->
         <main class="flex-grow">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <!-- Loading state -->
@@ -67,7 +68,7 @@
                     <div class="text-red-600 dark:text-red-400">
                         <i class="fas fa-exclamation-circle fa-2x"></i>
                         <p id="errorMessage" class="mt-4">Failed to load presentation details</p>
-                        <a href="index.html" class="mt-4 inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+                        <a href="../index.html" class="mt-4 inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
                             Return to Index
                         </a>
                     </div>
@@ -115,25 +116,9 @@
         </main>
 
         <!-- Footer -->
-        <footer class="bg-white dark:bg-gray-800 shadow">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                <div class="flex justify-between items-center">
-                    <p class="text-gray-600 dark:text-gray-400">
-                        <a href="https://github.com/fumiya-kume/presentation" class="hover:text-gray-900 dark:hover:text-white">
-                            <i class="fab fa-github mr-2"></i>
-                            View on GitHub
-                        </a>
-                    </p>
-                    <p class="text-gray-500 dark:text-gray-400 text-sm">
-                        <a href="https://github.com/marp-team/marp" class="hover:text-gray-900 dark:hover:text-white">
-                            Built with Marp
-                        </a>
-                    </p>
-                </div>
-            </div>
-        </footer>
+        <app-footer></app-footer>
     </div>
 
-    <script src="detail.js"></script>
+    <script src="detail.js" type="module"></script>
 </body>
 </html>
