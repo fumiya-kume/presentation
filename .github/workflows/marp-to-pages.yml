@@ -32,11 +32,24 @@ jobs:
 
       - name: Process markdown files
         run: |
+          # Create build directory with proper permissions
+          mkdir -p build
+          chmod 777 build
+
           # Function to generate output in different formats
           generate_output() {
             local input="$1" output="$2"
+            local output_dir=$(dirname "$output")
+            
             echo "Generating $output from $input"
-            docker run --rm -u root:root -v "$(pwd):/work" -w /work marpteam/marp-cli:v3.0.2 \
+            echo "Ensuring output directory $output_dir exists with proper permissions"
+            mkdir -p "$output_dir"
+            chmod 777 "$output_dir"
+            
+            docker run --rm -u root:root \
+              -v "$(pwd):/work" \
+              -w /work \
+              marpteam/marp-cli:v3.0.2 \
               "/work/${input}" -o "/work/${output}" --allow-local-files
           }
 
@@ -44,6 +57,8 @@ jobs:
           copy_images() {
             local src="$1" dst="$2"
             echo "Copying images from $src to $dst"
+            mkdir -p "$dst"
+            chmod 777 "$dst"
             find "$src" -maxdepth 1 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.gif" \) \
               -exec cp {} "$dst/" \;
           }
@@ -58,6 +73,7 @@ jobs:
             filename=$(basename "$file" .md)
             target_dir="build/${dir}"
             mkdir -p "$target_dir"
+            chmod 777 "$target_dir"
             
             # Copy images
             copy_images "$dir" "$target_dir"
