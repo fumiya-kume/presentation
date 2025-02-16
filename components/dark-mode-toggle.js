@@ -1,12 +1,8 @@
 import { BaseComponent } from './base-component.js';
 
 export class DarkModeToggle extends BaseComponent {
-  constructor() {
-    super();
-    this.loadTailwindCSS();
-  }
-
-  connectedCallback() {
+  async connectedCallback() {
+    await super.connectedCallback();
     this.render();
     this.setupEventListeners();
     this.initializeDarkMode();
@@ -14,28 +10,8 @@ export class DarkModeToggle extends BaseComponent {
 
   render() {
     this.shadowRoot.innerHTML = `
-      <style>
-        :host {
-          display: inline-block;
-        }
-        
-        button {
-          padding: 0.5rem;
-          border-radius: 0.5rem;
-          transition: background-color 0.2s;
-        }
-        
-        button:hover {
-          background-color: var(--hover-bg, #f3f4f6);
-        }
-        
-        :host-context(.dark) button:hover {
-          background-color: var(--dark-hover-bg, #374151);
-        }
-      </style>
-      
-      <button id="darkModeToggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
-        <i class="fas fa-moon dark:text-white"></i>
+      <button id="darkModeToggle" class="p-2 rounded-lg hover:bg-gray-100">
+        <i class="fas fa-moon text-gray-600"></i>
       </button>
     `;
   }
@@ -63,6 +39,6 @@ export class DarkModeToggle extends BaseComponent {
 
   updateIcon(isDark) {
     const icon = this.shadowRoot.querySelector('i');
-    icon.className = isDark ? 'fas fa-sun text-white' : 'fas fa-moon';
+    icon.className = isDark ? 'fas fa-sun text-white' : 'fas fa-moon text-gray-600';
   }
 } 
