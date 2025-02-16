@@ -65,7 +65,7 @@ jobs:
               -v "$(pwd):/work" \
               -w /work \
               -e MARP_USER="root:root" \
-              marpteam/marp-cli:v3.0.2 \
+              marpteam/marp-cli:v4.1.1 \
               "/work/${input}" --allow-local-files -o "/work/${output}"
           }
 
