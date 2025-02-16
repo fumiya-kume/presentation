@@ -24,16 +24,32 @@ jobs:
       - name: Ensure build dir exists
         run: mkdir -p build
 
-      - name: Find Marp markdown files
+      - name: Find Marp markdown files and prepare paths
         id: find-md
         run: |
           echo "Looking for Marp markdown files..."
           echo "Found markdown files:"
           find . -type f -name "*.md" ! -path "./.github/*" ! -path "./build/*"
           echo "Checking for marp: true..."
-          find . -type f -name "*.md" ! -path "./.github/*" ! -path "./build/*" -exec sh -c 'echo "Checking $1"; grep -l "marp: true" "$1"' sh {} \;
-          echo "Creating JSON array..."
-          files=$(find . -type f -name "*.md" ! -path "./.github/*" ! -path "./build/*" -exec sh -c 'grep -l "marp: true" "$1"' sh {} \; | sed 's|^./||' | jq -R -s -c 'split("\n")[:-1]')
+          
+          # Create a temporary directory for processed files
+          mkdir -p temp_processed
+          
+          # Find Marp files and process paths
+          while IFS= read -r file; do
+            # Convert spaces to hyphens in the path
+            new_path=$(echo "$file" | sed 's/ /-/g')
+            # Create directory structure
+            mkdir -p "$(dirname "temp_processed/$new_path")"
+            # Copy file to new location
+            cp "$file" "temp_processed/$new_path"
+            # Output the processed path
+            echo "$new_path"
+          done < <(find . -type f -name "*.md" ! -path "./.github/*" ! -path "./build/*" ! -path "./temp_processed/*" -exec sh -c 'grep -l "marp: true" "$1"' sh {} \;) | \
+          # Create JSON array of processed paths
+          jq -R -s -c 'split("\n")[:-1]' > temp_files.json
+          
+          files=$(cat temp_files.json)
           echo "Found files: $files"
           echo "files=$files" >> $GITHUB_OUTPUT
 
@@ -51,20 +67,30 @@ jobs:
             mkdir -p "${target_dir}"
             
             # Copy all images from the source directory
-            find "${dir}" -maxdepth 1 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.gif" \) -exec cp {} "${target_dir}/" \;
+            # Convert spaces to hyphens in image filenames
+            original_dir=$(echo "$dir" | sed 's/-/ /g')
+            find "${original_dir}" -maxdepth 1 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.gif" \) -exec sh -c '
+              for img; do
+                new_name=$(basename "$img" | sed "s/ /-/g")
+                cp "$img" "'${target_dir}'/${new_name}"
+              done
+            ' sh {} +
             
             # Generate HTML
-            docker run --rm -u root:root -v "$(pwd):/work" -w /work marpteam/marp-cli:v3.0.2 \
-              "/work/${file}" -o "/work/${target_dir}/${filename}.html" --allow-local-files
+            docker run --rm -u root:root -v "$(pwd)/temp_processed:/work" -w /work marpteam/marp-cli:v3.0.2 \
+              "/work/${file}" -o "/work/../build/${target_dir}/${filename}.html" --allow-local-files
             
             # Generate PDF
-            docker run --rm -u root:root -v "$(pwd):/work" -w /work marpteam/marp-cli:v3.0.2 \
-              "/work/${file}" --allow-local-files -o "/work/${target_dir}/${filename}.pdf"
+            docker run --rm -u root:root -v "$(pwd)/temp_processed:/work" -w /work marpteam/marp-cli:v3.0.2 \
+              "/work/${file}" --allow-local-files -o "/work/../build/${target_dir}/${filename}.pdf"
             
             # Generate PPTX
-            docker run --rm -u root:root -v "$(pwd):/work" -w /work marpteam/marp-cli:v3.0.2 \
-              "/work/${file}" --allow-local-files -o "/work/${target_dir}/${filename}.pptx"
+            docker run --rm -u root:root -v "$(pwd)/temp_processed:/work" -w /work marpteam/marp-cli:v3.0.2 \
+              "/work/${file}" --allow-local-files -o "/work/../build/${target_dir}/${filename}.pptx"
           done < <(echo '${{ steps.find-md.outputs.files }}' | jq -r '.[]')
+          
+          # Clean up temporary files
+          rm -rf temp_processed temp_files.json
 
       - name: Deploy preview
         if: ${{ github.event_name == 'pull_request' }}
