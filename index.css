@@ -1,0 +1,52 @@
+/* Base styles */
+.social-link {
+    @apply text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors;
+}
+
+/* Component styles */
+presentation-card {
+    @apply block bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden transition-colors duration-200;
+}
+
+loading-states {
+    @apply block text-center py-12;
+}
+
+loading-states[state="loading"] .loading-indicator {
+    @apply animate-pulse-slow;
+}
+
+loading-states[state="loading"] .loading-text {
+    @apply mt-4 text-gray-600 dark:text-gray-400;
+}
+
+loading-states[state="error"] .error-container {
+    @apply text-red-600 dark:text-red-400;
+}
+
+loading-states[state="error"] .error-message {
+    @apply mt-4;
+}
+
+loading-states[state="empty"] .empty-container {
+    @apply text-gray-600 dark:text-gray-400;
+}
+
+/* Grid layout */
+#presentationGrid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+}
+
+/* Dark mode transitions */
+.transition-dark {
+    @apply transition-colors duration-200;
+}
+
+/* Header and footer styles */
+header-component {
+    @apply bg-white dark:bg-gray-800 shadow transition-dark;
+}
+
+footer-component {
+    @apply bg-white dark:bg-gray-800 shadow transition-dark;
+} 
