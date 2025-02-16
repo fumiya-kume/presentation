@@ -31,7 +31,15 @@ class PresentationState {
 
     async loadPresentations() {
         try {
-            const response = await fetch('metadata.json');  // Updated path
+            // Try loading from the current directory first
+            let response = await fetch('metadata.json');
+            
+            // If that fails, try the GitHub Pages path
+            if (!response.ok && window.location.hostname.includes('github.io')) {
+                const basePath = window.location.pathname.split('/')[1]; // Should be 'presentation'
+                response = await fetch(`/${basePath}/metadata.json`);
+            }
+
             if (!response.ok) {
                 throw new Error(`Failed to load metadata (Status: ${response.status})`);
             }
