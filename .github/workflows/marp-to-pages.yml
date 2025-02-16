@@ -33,7 +33,10 @@ jobs:
           echo "files=$files" >> $GITHUB_OUTPUT
 
       - name: Create build directory
-        run: mkdir -p build
+        run: |
+          mkdir -p build
+          # Copy detail page files
+          cp -r detail/* build/
 
       - name: Copy index page
         run: |
@@ -42,6 +45,7 @@ jobs:
           # Update paths for preview if needed
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             sed -i "s|metadata.json|pr-preview/${{ github.event.number }}/metadata.json|g" build/index.html
+            sed -i "s|metadata.json|pr-preview/${{ github.event.number }}/metadata.json|g" build/detail.html
           fi
 
       - name: Process markdown files and generate metadata
@@ -102,7 +106,8 @@ jobs:
                 lastModified: $lastModified,
                 formats: {
                   html: ($path + ".html"),
-                  pdf: ($path + ".pdf")
+                  pdf: ($path + ".pdf"),
+                  pptx: ($path + ".pptx")
                 }
               }'
           }
