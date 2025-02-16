@@ -1,3 +1,15 @@
+/* Color scheme */
+:root {
+  --color-primary: #C0FFEE;
+  --color-primary-dark: #9EDFD3;
+  --color-primary-light: #D1FFF2;
+  --color-secondary: #FF0011;
+  --color-secondary-dark: #CC000E;
+  --color-secondary-light: #FF3344;
+  --color-text-on-primary: #000000;
+  --color-text-on-secondary: #FFFFFF;
+}
+
 /* Base component utilities */
 :host {
   display: block;
@@ -23,10 +35,33 @@
   transition-duration: 200ms;
 }
 
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.btn-secondary {
+  background-color: var(--color-secondary);
+  color: var(--color-text-on-secondary);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-secondary-dark);
+}
+
 .card {
   border-radius: 0.5rem;
   padding: 1rem;
   transition-property: color, background-color, border-color, box-shadow;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 200ms;
+  border: 1px solid var(--color-primary);
+}
+
+.card:hover {
+  box-shadow: 0 0 0 2px var(--color-primary-light);
 } 
