@@ -4,11 +4,23 @@ export class BaseComponent extends HTMLElement {
     this.attachShadow({ mode: 'open' });
   }
 
-  // Utility method to inject styles
-  injectStyles(styles) {
-    const styleSheet = new CSSStyleSheet();
-    styleSheet.replaceSync(styles);
-    this.shadowRoot.adoptedStyleSheets = [styleSheet];
+  async connectedCallback() {
+    await this.loadStyles();
+  }
+
+  // Load shared styles
+  async loadStyles() {
+    try {
+      const response = await fetch('/components/styles.css');
+      if (!response.ok) throw new Error('Failed to load styles');
+      const styles = await response.text();
+      
+      const styleSheet = new CSSStyleSheet();
+      await styleSheet.replace(styles);
+      this.shadowRoot.adoptedStyleSheets = [styleSheet];
+    } catch (error) {
+      console.error('Error loading styles:', error);
+    }
   }
 
   // Utility method to dispatch custom events
