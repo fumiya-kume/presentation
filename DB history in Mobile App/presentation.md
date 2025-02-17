@@ -53,7 +53,7 @@ style: |
     - バックエンドはほぼ触らない
 - 趣味
     - スキー⛷️、旅行✈️
-    - AI Agent, このスライドもCursorを活用して作成した
+    - AI Agent, このスライドをホスティングするWeb AppもCursorで作成した
 
 ![bg right:33%](../icon.jpg)
 
