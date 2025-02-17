@@ -135,7 +135,7 @@ jobs:
             generate_output "$file" "${target_dir}/${filename}.html"
             generate_output "$file" "${target_dir}/${filename}.pdf"
             generate_output "$file" "${target_dir}/${filename}.pptx"
-            cp "${filename}.png" build/
+            cp $(basename "$file" .png) build/
             
             # Extract and add metadata
             metadata=$(extract_metadata "$file")
